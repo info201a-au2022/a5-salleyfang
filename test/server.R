@@ -9,11 +9,6 @@
 
 library(shiny)
 
-co2_df <- read.csv(
-          file = "~/Documents/info201/data/owid-co2-data.csv",
-          stringsAsFactors = FALSE, header = TRUE
-          )
-
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
