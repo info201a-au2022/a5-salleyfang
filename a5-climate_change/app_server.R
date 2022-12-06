@@ -85,26 +85,39 @@ library(maps)
 
 co2_df <- read.csv(file = "owid-co2-data.csv")
 
+# df of cumulative cement, coal, flaring, gas, oil, trade co2 emissions for
+# each country, users can pick the country to graph in bar chart
 co2_type_df <- co2_df %>%
   filter(iso_code != "", na.rm = TRUE) %>% 
-  select(country, year, cement_co2, coal_co2, flaring_co2, gas_co2,
-         oil_co2, trade_co2, cumulative_co2) %>% 
-  replace(is.na(.), 0)
+  select(country, cement_co2, coal_co2, flaring_co2, gas_co2, oil_co2,
+         trade_co2) %>% 
+  replace(is.na(.), 0.0)  %>%
+  group_by(country) %>%
+  mutate(sum_cement = sum(cement_co2)) %>% 
+  mutate(sum_coal = sum(coal_co2)) %>% 
+  mutate(sum_flaring = sum(flaring_co2)) %>% 
+  mutate(sum_gas = sum(gas_co2)) %>% 
+  mutate(sum_oil = sum(oil_co2)) %>% 
+  mutate(sum_trade = sum(trade_co2)) %>% 
+  select(country, sum_cement, sum_coal, sum_flaring, sum_gas, sum_oil,
+         sum_trade) %>% 
+  distinct() %>% 
+  pivot_longer(-country, names_to = "co2_type", values_to = "value")
 
+# df of co2 emissions per year for each country, users can pick countries to
+# graph and compare trends for multiple at a time, users can select year
 country_co2_df <- co2_df %>% 
   filter(iso_code != "", na.rm = TRUE) %>%
-  select(country, iso_code, year, co2) %>%
-  replace(is.na(.), 0)
+  select(country, year, co2) %>%
+  replace(is.na(.), 0.0)
 
 shiny_server <- function(input, output) {
-  output$plot <- renderPlotly({
-    p <- ggplot(data = co2_type_df, mapping = aes(year, cumulative_co2)) +
-      geom_point(color = "blue", size = 0.5) +
-      xlim(input$min_year, input$max_year) +
-      ylim(input$min_co2, input$max_co2) +
-      labs(x = "Year" , y = "Cumulative CO2 Emissions") +
+  output$barchart <- renderPlotly({
+    p <- ggplot(co2_type_df %>%  filter(country == input$country),
+                aes(x = input$country, y = value)) +
+      geom_bar(aes(fill = co2_type), stat = "identity", position = "dodge") +
       scale_y_continuous(labels = scales::comma) +
-      ggtitle("Cumulative CO2 Emissions By Year (1850-2021)")
+      labs(x = "Country", y = "CO2 Emissions (million tonnes)")
     return(p)
   })
   
@@ -124,14 +137,14 @@ shiny_server <- function(input, output) {
   # })
   
   output$graph <- renderPlotly({
-    p <- ggplot(data = country_co2_df %>% filter(country == input$country),
+    p <- ggplot(data = country_co2_df %>% filter(country == input$countries),
                 aes(x = year, y = co2)) +
-         geom_line(aes(color = iso_code)) +
+         geom_line(aes(color = country)) +
          labs(x = "Year", y = "CO2 Emissions (yearly)") +
          ggtitle("Yearly CO2 Emissions By Country")
     return(p)
   })
-  
+
   output$co2_pop_ratio <- renderText({
     co2_to_population <- co2_df %>% 
       filter(year == 2021, na.rm = TRUE) %>% 
@@ -158,6 +171,7 @@ shiny_server <- function(input, output) {
       pull(country)
     current_co2_lowest
   })
+  
   output$co2_change_lowest <- renderText({
     country_co2_change_lowest <- co2_df %>% 
       filter(country == "Tuvalu", na.rm = TRUE) %>% 
@@ -178,6 +192,7 @@ shiny_server <- function(input, output) {
       pull(country)
     current_co2_highest
   })
+  
   output$co2_change_highest <- renderText({
     country_co2_change_highest <- co2_df %>% 
       filter(country == "China", na.rm = TRUE) %>% 

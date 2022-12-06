@@ -9,10 +9,7 @@
 library(shiny)
 library(tidyverse)
 library(rsconnect)
-# library(dplyr)
-# library(ggplot2)
-# library(plotly)
-# library(ggthemes)
+library(shinythemes)
 
 source("app_ui.R")
 source("app_server.R")
