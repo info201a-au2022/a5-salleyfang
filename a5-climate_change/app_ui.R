@@ -3,7 +3,8 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(plotly)
-library(maps)
+
+# ADD SHINY WIDGETS: https://dreamrs.github.io/shinyWidgets/
 
 text_page <- tabPanel(
   titlePanel("Selected Values"),
@@ -56,6 +57,18 @@ plot_sidebar <- sidebarPanel(
 plot_main <- mainPanel(
   plotlyOutput("plot")
 )
+
+# co2_df <- read.csv(
+#   file = "https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv",
+#   stringsAsFactors = FALSE, header = TRUE
+# )
+
+co2_df <- read.csv(file = "owid-co2-data.csv")
+
+country_co2_df <- co2_df %>% 
+  filter(iso_code != "", na.rm = TRUE) %>%
+  select(country, iso_code, year, co2) %>%
+  replace(is.na(.), 0)
 
 graph_sidebar <- sidebarPanel(
   selectInput(

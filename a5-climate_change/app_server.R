@@ -6,10 +6,10 @@ library(plotly)
 library(ggthemes)
 library(maps)
 
-co2_df <- read.csv(
-                  file = "~/Documents/info201/data/owid-co2-data.csv",
-                  stringsAsFactors = FALSE, header = TRUE
-                  )
+# co2_df <- read.csv(
+#                   file = "../owid-co2-data.csv",
+#                   stringsAsFactors = FALSE, header = TRUE
+#                   )
 # co2_pop_max_co2_change <- co2_df %>% 
 #   filter(country == "Qatar", na.rm = TRUE) %>% 
 #   select(co2) %>% 
@@ -34,26 +34,26 @@ co2_df <- read.csv(
 #   select(country, co2_per_capita) %>% 
 #   filter(co2_per_capita == min(co2_per_capita, na.rm = TRUE)) %>% 
 #   pull(country)
-world_data <- map_data("world") %>%
-  rename("country" = "region")
+# world_data <- map_data("world") %>%
+#   rename("country" = "region")
 
-country_df <- co2_df %>% 
-  filter(iso_code != "", na.rm = TRUE) %>% 
-  filter(year == 2021, na.rm = TRUE) %>% 
-  select(country, iso_code, co2, co2_per_capita, cumulative_co2,
-         energy_per_capita, share_global_co2) %>%
-  mutate(country = ifelse(country == "United Kingdom", "UK", country)) %>%
-  mutate(country = ifelse(country == "United States", "USA", country)) %>%
-  mutate(country = ifelse(country == "British Virgin Islands", "Virgin Islands",
-                          country)) %>%
-  mutate(country = ifelse(country == "United States Virgin Islands",
-                          "Virgin Islands", country)) %>% 
-  mutate(country = ifelse(country == "Democratic Republic of Congo",
-                          "Democratic Republic of the Congo", country))
-
-world_country_combined <- left_join(country_df, world_data, by = "country") %>%
-  select(long, lat, country, iso_code, co2, co2_per_capita, cumulative_co2,
-         energy_per_capita, share_global_co2)
+# country_df <- co2_df %>% 
+#   filter(iso_code != "", na.rm = TRUE) %>% 
+#   filter(year == 2021, na.rm = TRUE) %>% 
+#   select(country, iso_code, co2, co2_per_capita, cumulative_co2,
+#          energy_per_capita, share_global_co2) %>%
+#   mutate(country = ifelse(country == "United Kingdom", "UK", country)) %>%
+#   mutate(country = ifelse(country == "United States", "USA", country)) %>%
+#   mutate(country = ifelse(country == "British Virgin Islands", "Virgin Islands",
+#                           country)) %>%
+#   mutate(country = ifelse(country == "United States Virgin Islands",
+#                           "Virgin Islands", country)) %>% 
+#   mutate(country = ifelse(country == "Democratic Republic of Congo",
+#                           "Democratic Republic of the Congo", country))
+# 
+# world_country_combined <- left_join(country_df, world_data, by = "country") %>%
+#   select(long, lat, country, iso_code, co2, co2_per_capita, cumulative_co2,
+#          energy_per_capita, share_global_co2)
 # ggplot() +
 #   geom_polygon(data = world_country_combined, aes(fill = co2, x = long, y = lat, group = country)) +
 #   theme_void() +
@@ -67,23 +67,23 @@ world_country_combined <- left_join(country_df, world_data, by = "country") %>%
 # map('world', fill = world_data$co2, col = 1:10)
 # help(package='maps')
 
-create_map <- function(data, var) {
-  p <- ggplot(data, aes(x = long, y = lat, group = country)) +
-       geom_polygon(aes(fill = data[,var]), color = "black", size = 0.3) +
-       scale_fill_continuous(low = "deepskyblue4", high = "brown1",
-                          na.value = "Gray") +
-       labs(fill = "Frequency") +
-       theme(legend.title = element_text(size = 9),
-             legend.key.size = unit(0.4, "cm")) +
-       labs(title = "World Map of Variable Concentrations in 2021")
-  # p <- ggplot(data, aes(map_id = Country)) +
-  #   geom_map(aes(fill = data[,var]), map = data, color = "white") +
-  #   expand_limits(x = data$long, y = data$lat) +
-  #   scale_fill_viridis_c()
-  return(p)
-} 
+# create_map <- function(data, var) {
+#   p <- ggplot(data, aes(x = long, y = lat, group = country)) +
+#        geom_polygon(aes(fill = data[,var]), color = "black", size = 0.3) +
+#        scale_fill_continuous(low = "deepskyblue4", high = "brown1",
+#                           na.value = "Gray") +
+#        labs(fill = "Frequency") +
+#        theme(legend.title = element_text(size = 9),
+#              legend.key.size = unit(0.4, "cm")) +
+#        labs(title = "World Map of Variable Concentrations in 2021")
+#   return(p)
+# } 
+# co2_df <- read.csv(
+#   file = "https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv",
+#   stringsAsFactors = FALSE, header = TRUE
+# )
 
-# create_map(world_country_combined, "co2")
+co2_df <- read.csv(file = "owid-co2-data.csv")
 
 co2_type_df <- co2_df %>%
   filter(iso_code != "", na.rm = TRUE) %>% 
