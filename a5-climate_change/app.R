@@ -6,13 +6,18 @@
 #
 #    http://shiny.rstudio.com/
 #
-library(shiny)
-library(tidyverse)
-library(rsconnect)
-library(shinythemes)
-
 source("app_ui.R")
 source("app_server.R")
+
+library(shiny)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(shinythemes)
+library(rsconnect)
+library(reshape2)
+library(shinyWidgets)
 
 # Run the application 
 shinyApp(ui = ui, server = shiny_server)
