@@ -28,13 +28,27 @@ shiny_server <- function(input, output) {
            sum_trade) %>% 
     distinct() %>% 
     pivot_longer(-country, names_to = "co2_type", values_to = "value")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_cement", "total cement")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_coal", "total coal")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_flaring", "total flaring")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_gas", "total gas")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_oil", "total oil")
+  co2_type_df$co2_type <- str_replace_all(co2_type_df$co2_type,
+                                          "sum_trade", "total trade")
 
   output$barchart <- renderPlotly({
     p <- ggplot(co2_type_df %>%  filter(country == input$country),
                 aes(x = input$country, y = value)) +
       geom_bar(aes(fill = co2_type), stat = "identity", position = "dodge") +
+      labs(fill = "CO2 Emissions Type") +
       scale_y_continuous(labels = scales::comma) +
-      labs(x = "Country", y = "CO2 Emissions (million tonnes)")
+      labs(x = "Country", y = "CO2 Emissions (million tons)") +
+      ggtitle("Total CO2 Emissions Per Type")
     return(p)
   })
   
@@ -53,7 +67,7 @@ shiny_server <- function(input, output) {
     p <- ggplot(data = new_co2_df, aes(x = year, y = co2)) +
          geom_line(aes(color = country)) +
          labs(x = "Year", y = "CO2 Emissions (yearly)") +
-         ggtitle("Yearly CO2 Emissions By Country")
+         ggtitle("Yearly CO2 Emissions By Country") 
     return(p)
   })
 
