@@ -8,6 +8,67 @@ library(reshape2)
 library(shinyWidgets)
 
 shiny_server <- function(input, output) {
+  # Values of Interest (Page 1)
+  output$co2_pop_ratio <- renderText({
+    co2_to_population <- co2_df %>% 
+      filter(year == 2021, na.rm = TRUE) %>% 
+      filter(iso_code != "", na.rm = TRUE) %>% 
+      select(country, population, co2) %>% 
+      mutate(co2_pop_ratio = co2 / population) 
+    co2_pop_max <- co2_to_population %>% 
+      filter(co2_pop_ratio == max(co2_pop_ratio, na.rm = TRUE)) %>% 
+      pull(country)
+    ratio_text <- paste0("The first relevant value of interest was the country
+                          with the highest CO2 to population ratio: ",
+                         co2_pop_max, ". This value is useful in understanding
+                          the place where there is a high (or highest) amount
+                          of CO2 emissions per person in the population.")
+    ratio_text
+  })
+  
+  output$co2_country_lowest <- renderText({
+    current_co2_lowest <- co2_df %>% 
+      filter(year == 2021, na.rm = TRUE) %>% 
+      filter(iso_code != "", na.rm = TRUE) %>% 
+      select(country, co2) %>% 
+      filter(co2 == min(co2, na.rm = TRUE)) %>% 
+      pull(country)
+    current_co2_lowest
+  })
+  
+  output$co2_change_lowest <- renderText({
+    country_co2_change_lowest <- co2_df %>% 
+      filter(country == "Tuvalu", na.rm = TRUE) %>% 
+      select(co2) %>% 
+      filter(co2 > 0.0, na.rm = TRUE) %>% 
+      mutate(co2_change = max(co2) - min(co2)) %>% 
+      summarise(co2_change = round(mean(co2_change), digits = 5)) %>% 
+      pull(co2_change)
+    country_co2_change_lowest
+  })
+  
+  output$co2_country_highest <- renderText({
+    current_co2_highest <- co2_df %>% 
+      filter(year == 2021, na.rm = TRUE) %>% 
+      filter(iso_code != "", na.rm = TRUE) %>% 
+      select(country, co2) %>% 
+      filter(co2 == max(co2, na.rm = TRUE)) %>% 
+      pull(country)
+    current_co2_highest
+  })
+  
+  output$co2_change_highest <- renderText({
+    country_co2_change_highest <- co2_df %>% 
+      filter(country == "China", na.rm = TRUE) %>% 
+      select(co2) %>% 
+      filter(co2 > 0.0, na.rm = TRUE) %>% 
+      mutate(co2_change = max(co2) - min(co2)) %>% 
+      summarise(co2_change = round(mean(co2_change), digits = 2)) %>% 
+      pull(co2_change)
+    country_co2_change_highest
+  })
+  
+  # CO2 Data Visualizations (Page 2)
   co2_df <- read_csv("owid-co2-data.csv")
   
   # df of cumulative cement, coal, flaring, gas, oil, trade co2 emissions for
@@ -69,64 +130,5 @@ shiny_server <- function(input, output) {
          labs(x = "Year", y = "CO2 Emissions (yearly)") +
          ggtitle("Yearly CO2 Emissions By Country") 
     return(p)
-  })
-
-  output$co2_pop_ratio <- renderText({
-    co2_to_population <- co2_df %>% 
-      filter(year == 2021, na.rm = TRUE) %>% 
-      filter(iso_code != "", na.rm = TRUE) %>% 
-      select(country, population, co2) %>% 
-      mutate(co2_pop_ratio = co2 / population) 
-    co2_pop_max <- co2_to_population %>% 
-      filter(co2_pop_ratio == max(co2_pop_ratio, na.rm = TRUE)) %>% 
-      pull(country)
-    ratio_text <- paste0("The first relevant value of interest was the country
-                          with the highest CO2 to population ratio: ",
-                          co2_pop_max, ". This value is useful in understanding
-                          the place where there is a high (or highest) amount
-                          of CO2 emissions per person in the population.")
-    ratio_text
-  })
-
-  output$co2_country_lowest <- renderText({
-    current_co2_lowest <- co2_df %>% 
-      filter(year == 2021, na.rm = TRUE) %>% 
-      filter(iso_code != "", na.rm = TRUE) %>% 
-      select(country, co2) %>% 
-      filter(co2 == min(co2, na.rm = TRUE)) %>% 
-      pull(country)
-    current_co2_lowest
-  })
-  
-  output$co2_change_lowest <- renderText({
-    country_co2_change_lowest <- co2_df %>% 
-      filter(country == "Tuvalu", na.rm = TRUE) %>% 
-      select(co2) %>% 
-      filter(co2 > 0.0, na.rm = TRUE) %>% 
-      mutate(co2_change = max(co2) - min(co2)) %>% 
-      summarise(co2_change = round(mean(co2_change), digits = 5)) %>% 
-      pull(co2_change)
-    country_co2_change_lowest
-  })
-  
-  output$co2_country_highest <- renderText({
-    current_co2_highest <- co2_df %>% 
-      filter(year == 2021, na.rm = TRUE) %>% 
-      filter(iso_code != "", na.rm = TRUE) %>% 
-      select(country, co2) %>% 
-      filter(co2 == max(co2, na.rm = TRUE)) %>% 
-      pull(country)
-    current_co2_highest
-  })
-  
-  output$co2_change_highest <- renderText({
-    country_co2_change_highest <- co2_df %>% 
-      filter(country == "China", na.rm = TRUE) %>% 
-      select(co2) %>% 
-      filter(co2 > 0.0, na.rm = TRUE) %>% 
-      mutate(co2_change = max(co2) - min(co2)) %>% 
-      summarise(co2_change = round(mean(co2_change), digits = 2)) %>% 
-      pull(co2_change)
-    country_co2_change_highest
   })
 }

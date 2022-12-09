@@ -11,35 +11,17 @@ library(shinyWidgets)
 # ADD SHINY WIDGETS: https://dreamrs.github.io/shinyWidgets/
 co2_df <- read_csv("owid-co2-data.csv")
 
-# co2_type_df <- co2_df %>%
-#   filter(iso_code != "", na.rm = TRUE) %>% 
-#   select(country, cement_co2, coal_co2, flaring_co2, gas_co2, oil_co2,
-#          trade_co2) %>% 
-#   replace(is.na(.), 0.0)  %>%
-#   group_by(country) %>%
-#   mutate(sum_cement = sum(cement_co2)) %>% 
-#   mutate(sum_coal = sum(coal_co2)) %>% 
-#   mutate(sum_flaring = sum(flaring_co2)) %>% 
-#   mutate(sum_gas = sum(gas_co2)) %>% 
-#   mutate(sum_oil = sum(oil_co2)) %>% 
-#   mutate(sum_trade = sum(trade_co2)) %>% 
-#   select(country, sum_cement, sum_coal, sum_flaring, sum_gas, sum_oil,
-#          sum_trade) %>% 
-#   distinct() %>% 
-#   pivot_longer(-country, names_to = "co2_type", values_to = "value")
-# 
-# country_co2_df <- co2_df %>% 
-#   filter(iso_code != "", na.rm = TRUE) %>%
-#   select(country, year, co2) %>%
-#   replace(is.na(.), 0.0)
-
 text_page <- tabPanel(
-  titlePanel("Selected Values"),
-  htmlOutput("co2_pop_ratio"),
-  htmlOutput("co2_country_lowest"),
-  htmlOutput("co2_change_lowest"),
-  htmlOutput("co2_country_highest"),
-  htmlOutput("co2_change_highest")
+  titlePanel("Introduction"),
+  h2(strong("Intro")),
+  p(""),
+  h2(strong("Values of Interest")),
+  p("Hi I think this is", textOutput("co2_country_lowest", inline = T))
+  # htmlOutput("co2_pop_ratio"),
+  # htmlOutput("co2_country_lowest"),
+  # htmlOutput("co2_change_lowest"),
+  # htmlOutput("co2_country_highest"),
+  # htmlOutput("co2_change_highest")
 )
 
 barchart_sidebar <- sidebarPanel(
@@ -69,17 +51,17 @@ graph_main <- mainPanel(
 
 widgets_page <- tabPanel(
    titlePanel("Interactive Data Visualizations"),
-   h2("Total CO2 Emissions Per Type For a Selected Country"),
+   h2(strong("Total CO2 Emissions Per Type For a Selected Country")),
    sidebarLayout(barchart_sidebar, barchart_main),
    p(""),
    p(em("Caption, Fig 1."), "This bar chart displays the total emissions
-     for different CO2 emiissions types. It allows users to select a
+     for different CO2 emissions types. It allows users to select a
      country and view its total cement, coal, flaring, gas, oil, and
      trade emissions as a bar chart. Seeing this data can help users
      better understand the distribution of CO2 emissions among different
      countries. This information can help uncover patterns in which
      continents/regions/economies may have more emissions of a certain type."),
-   h2("Yearly CO2 Emissions For Countries and Time Period Selected"),
+   h2(strong("Yearly CO2 Emissions For Countries and Time Period Selected")),
    sidebarLayout(graph_sidebar, graph_main),
    p(""),
    p(em("Caption, Fig 2."), "This line graph displays the CO2 emissions for
