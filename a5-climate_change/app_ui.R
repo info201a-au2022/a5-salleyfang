@@ -14,14 +14,67 @@ co2_df <- read_csv("owid-co2-data.csv")
 text_page <- tabPanel(
   titlePanel("Introduction"),
   h2(strong("Intro")),
-  p(""),
+  p(strong("Climate change"), "and", em("CO2 emission rates specifically"), "have 
+    become a highly discussed topic in recent years. The effects of climate change
+    are becoming more present, and one of the factors in that becoming the case is
+    the rapid rise in CO2 emissions. The", strong("variables"), "I will focus on
+    are", em("yearly CO2 emissions"), "for countries and", em("cumulative emissions"),
+    "for industries that produce CO2 within countries (measured in millions of tons)."),
+  p("Analyzing the", strong("yearly CO2 emissions rates"), "allows us to find patterns
+    in the CO2 emissions changes among different countries. It is important to
+    see years when countries have seen rises and/or falls in CO2 emissions 
+    and identify the countries that are currently seeing fast rises in order
+    analyze and find ways to slow down the growth before it becomes a 
+    bigger issue. These solutions can help prevent rapid increases in other
+    countries as well."),
+  p(strong("Cumulative CO2 emissions"), ", seen in the different types of CO2 
+    emissions I will cover (cement, coal, flaring, gas, oil, trade) is crucial in
+    determining the types of industries among countries around the world that
+    contribute the most to CO2 emissions. For example, countries in the
+    Middle East have big gas and oil industries, seen in the much
+    larger CO2 emissions rates for those two variables over others. The values
+    for these cumulative variables is important to analyze because finding the
+    most significant causes behind a country's CO2 emissions can signal to people
+    where to specifically try and slow down the growth. We can use this information
+    to better prepare when an industry in another country begins to grow and rising
+    CO2 emissions becomes an issue. Preparation is one of the ways in which we can
+    take part in slowing down the effects of climate change."),
   h2(strong("Values of Interest")),
-  p("Hi I think this is", textOutput("co2_country_lowest", inline = T))
-  # htmlOutput("co2_pop_ratio"),
-  # htmlOutput("co2_country_lowest"),
-  # htmlOutput("co2_change_lowest"),
-  # htmlOutput("co2_country_highest"),
-  # htmlOutput("co2_change_highest")
+  p("The first value of interest I wanted to highlight was the country with
+    the", em("highest CO2 Emissions to population ratio in 2021."),
+    strong(textOutput("co2_pop_ratio_country", inline = T)), "had a ratio of",
+    strong(textOutput("co2_pop_ratio_val", inline = T)), "million tons (meaning for
+    each person in the country, an average of 0.000036 million tons of CO2 were
+    emitted. This value is crucial in seeing how different types of calculations
+    can result in differing results for countries with high CO2 emissions.
+    Because Qatar is a small nation, their ratios may likely be higher even if
+    their overall emissions rate in 2021 was not the highest."),
+  p("The second value of interest I wanted to highlight was the country with
+    the", em("lowest CO2 emissions rate in 2021."),
+    strong(textOutput("co2_country_lowest", inline = T)), "had the lowest CO2
+    emissions rate of 0.008 million tons. I thought this value was interesting
+    because Tuvalu is a country rarely mentioned in the news, yet they are
+    contributing the least amount of CO2 emissions. Their", em("change from the year
+    with the lowest recorded CO2 emissions to highest emissions was"),
+    strong(textOutput("co2_change_lowest", inline = T)), "million tons, similar to
+    their 2021 total emissions. It is likely their low emissions is due to
+    their country still developing and not being in industries that produce
+    high rates of CO2, but their being the lowest and having such a small growth
+    in emissions should be recognized. Their growth can be seen in the following
+    line chart graphing their change from the earliest recorded to latest
+    recorded year."),
+  plotlyOutput("tuvalu_graph"),
+  p("The last value of interest I wanted to highlight was the country
+    with the", em("highest CO2 emissions rate in 2021."),
+    strong(textOutput("co2_country_highest", inline = T)), "had the highest CO2 
+    emissions of 11472.368 million tons. This value was not surprising but is
+    valuable to note as China has become a quickly growing producer of CO2
+    emissions each year. Their", em("change from the year with the lowest to the
+    year with the highest recorded CO2 emissions was"),
+    strong(textOutput("co2_change_highest", inline = T)), "million tons. The
+    country has seen rapid development and, as a result, rapid increases in CO2
+    emissions. Their growth can be seen in the line graph below."),
+  plotlyOutput("china_graph")
 )
 
 barchart_sidebar <- sidebarPanel(
@@ -79,7 +132,7 @@ widgets_page <- tabPanel(
 
 ui <- navbarPage(
   theme = shinytheme("darkly"),
-  title = "CO2 Changes",
+  title = "CO2 Data Report - Salley Fang",
   text_page,
   widgets_page
 )
